@@ -23,7 +23,7 @@ module InitExporter
       end
 
       def init_job_name(application, role)
-        fetch(:init_job_prefix) + application_init_name(application, role)
+        init_job_prefix + application_init_name(application, role)
       end
 
       def all_procfiles
@@ -83,6 +83,38 @@ module InitExporter
         else
           [:unknown, :unknown]
         end.map(&:to_sym)
+      end
+
+      def init_job_prefix
+        config = nil
+        on release_roles :all do
+          config = capture(:cat, '/etc/init-exporter.conf').split("\n").map(&:strip)
+        end
+        get_prefix(config)
+      end
+
+      COMMENT_SYMBOL = '#'.freeze
+      SECTION_SYMBOL = '['.freeze
+      DELIMITER      = ':'.freeze
+      MAIN_SECTION   = '[main]'.freeze
+      PREFIX_KEY     = 'prefix'.freeze
+
+      def get_prefix(config_lines)
+        main_section = false
+        prefix = nil
+        config_lines.each do |line|
+          next if line == '' || line[0] == COMMENT_SYMBOL
+          if line[0] == SECTION_SYMBOL
+            main_section = (line == MAIN_SECTION)
+            next
+          end
+          next unless main_section
+          key, value = line.split(DELIMITER)
+          next unless key == PREFIX_KEY
+          prefix = value.strip!
+          break
+        end
+        prefix
       end
     end
   end

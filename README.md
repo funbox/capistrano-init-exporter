@@ -22,22 +22,10 @@ Or install it yourself as:
 
 Capify your project as described [here](https://github.com/capistrano/capistrano#capify-your-project).
 
-Configure the project as a normal project using capistrano for deployment. Then add to your ``Capfile`` :
+Configure the project as a normal project which uses capistrano for deployment. Then add to your ``Capfile`` :
 
     require 'capistrano/init_exporter'
 
-In your `config/deploy.rb` :
+Install [init-exporter utility](https://github.com/funbox/init-exporter) on your server and configure it.
 
-    set :init_job_prefix, '<the prefix you want to be added to your project's processes>'
-
-Install [init-exporter utility](https://github.com/funbox/init-exporter) on your server and confure it as you need. Do not forget to set `prefix` variable in `/etc/init-exporter.conf` :
-
-    [main]
-
-      ...
-
-      # Prefix used for exported units and helpers
-      prefix: <the prefix you want to be added to your project's processes>
-
-
-To describe how your project should be started use procfiles version 2 as described [here](https://github.com/funbox/init-exporter#procfile-v2).
+Use [procfiles version 2](https://github.com/funbox/init-exporter#procfile-v2) to describe how your project should be started .
